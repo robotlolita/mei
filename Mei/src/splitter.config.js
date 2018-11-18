@@ -5,7 +5,7 @@ function resolve(relativePath) {
 }
 
 module.exports = {
-  entry: resolve("Mei.fsproj"),
+  entry: resolve("OrigamiTower.Mei.fsproj"),
   outDir: resolve("../build/package"),
   babel: {
     presets: [["@babel/env", { modules: "commonjs" }]],
