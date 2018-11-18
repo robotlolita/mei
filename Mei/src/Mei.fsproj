@@ -1,6 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <Description>A type-safe and practical CLI parsing library for Fable</Description>
+    <PackageProjectUrl>https://github.com/origamitower/mei</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/origamitower/mei/blob/master/LICENCE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/origamitower/mei</RepositoryUrl>
+    <PackageTags>fable;cli;argument;parser</PackageTags>
+    <Authors>Quil</Authors>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
@@ -12,7 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Core" Version="2.0.1" />
-    <PackageReference Include="Fable.Import.Node" Version="0.4.3" />
     <DotNetCliToolReference Include="dotnet-fable" Version="2.0.10" />
+  </ItemGroup>
+  <!-- Add source files to "fable" folder in Nuget package -->
+  <ItemGroup>
+    <Content Include="*.fsproj; **\*.fs" PackagePath="fable" />
   </ItemGroup>
 </Project>
