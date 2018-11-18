@@ -50,9 +50,12 @@ package-lock.json: package.json
 
 
 # -- EXAMPLES ---------------------------------------------------------
-ALL_EXAMPLES := examples/greeting/build/hello.js
+ALL_EXAMPLES := examples/greeting/build/hello.js examples/naval-fate/build/NavalFate.js
 
 examples: $(ALL_EXAMPLES)
 
 examples/greeting/build/hello.js: examples/greeting/hello.fsproj examples/greeting/hello.fs
 	cd examples/greeting && dotnet fable fable-splitter -- --config examples/greeting/splitter.config.js
+
+examples/naval-fate/build/NavalFate.js: examples/naval-fate/NavalFate.fsproj examples/naval-fate/NavalFate.fs
+	cd examples/naval-fate && dotnet fable fable-splitter -- --config examples/naval-fate/splitter.config.js
