@@ -23,18 +23,17 @@ type Options = {
 }
 
 type Commands =
-  | [<MainCommand>]
-    [<ShortDescription("Greets some person")>]
-    Main of Options * string
-
   | [<Prefix("--")>]
     [<ShortDescription("Shows version and exit")>]
     Version
 
-  | [<HelpCommand>]
-    [<Prefix("--")>]
+  | [<Prefix("--")>]
     [<ShortDescription("Shows how to use this application")>]
     Help
+
+  | [<MainCommand>]
+    [<ShortDescription("Greets some person")>]
+    Main of Options * name: string
 ```
 
 Generate a parser from the types, and use it to parse the command line arguments:
