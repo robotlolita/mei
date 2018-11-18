@@ -16,34 +16,27 @@ Describe the command line interface as F# types:
 open OrigamiTower.Mei
 
 type Options = {
-  [<Alias("-g")>]
-  [<ShortDescription("Defines the greeting to show")>]
-  [<DefaultValue("Hello")>]
-  greeting: string;
+  greeting: string option;
 }
 
 type Commands =
-  | [<Prefix("--")>]
-    [<ShortDescription("Shows version and exit")>]
-    Version
-
-  | [<Prefix("--")>]
-    [<ShortDescription("Shows how to use this application")>]
-    Help
-
-  | [<MainCommand>]
-    [<ShortDescription("Greets some person")>]
-    Main of Options * name: string
+  | Version
+  | Help
+  | Main of Options * name: string
 ```
 
 Generate a parser from the types, and use it to parse the command line arguments:
 
 ```fsharp
-let parser = cliParser<Commands>(programName="hello")
+let parser = cliParser<Commands>()
 match parser.Parse ["--greeting"; "Hi"; "Alice"] with
-| Main(opts, name) -> printfn "%s, %s" opts.greeting name
-| Version -> printfn "hello version 1.0.0"
-| Help -> printfn "%s" (parser.help())
+| Main(opts, name) ->
+    let greeting = Option.defaultValue "Hello" opts.greeting
+    in printfn "%s, %s" greeting name
+| Version ->
+    printfn "hello version 1.0.0"
+| Help ->
+    printfn "%s" (parser.help())
 ```
 
 If you run the program, it should display `Hi, Alice`.
@@ -64,7 +57,7 @@ If you change it to the empty list, it should display a detailed error to the us
               ^^^^^^
               <name>
 
-    For detailed usage, see "hello --help"
+    For detailed usage, see "hello help"
 
 You can look at the `examples` folder for more detailed and complete command line applications.
 
