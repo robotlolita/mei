@@ -1,5 +1,7 @@
 # Mei
 
+> **NOTE**: this library is still under development. Fable is partially supported for now.
+
 A type-safe and practical command line interface parsing library for Fable and .NET.
 
 ## Getting started
