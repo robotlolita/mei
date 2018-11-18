@@ -15,7 +15,6 @@
     <Compile Include="Main.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="dotnet-fable" Version="2.0.10" />
     <PackageReference Include="Fable.Core" Version="2.0.1" />
     <PackageReference Include="Fable.Import.Jest" Version="1.9.0" />
     <DotNetCliToolReference Include="dotnet-fable" Version="2.0.10" />
