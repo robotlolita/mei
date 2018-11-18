@@ -6,62 +6,60 @@ open OrigamiTower.Mei.Core.TypeSystem
 open OrigamiTower.Mei.Core.CliParsing
 
 describe "[Core] parsing specs" <| fun () ->
-  let m = emptyMeta
-
   describe "Parsing TInt" <| fun () ->
     it "Should succeed if there's an int to parse" <| fun () ->
-      parse (TInt m) ["2"; "3"] --> Ok (Int (m, 2), ["3"])
-      parse (TInt m) ["2"] --> Ok (Int (m, 2), [])
+      parse (TInt) ["2"; "3"] --> Ok (Int 2, ["3"])
+      parse (TInt) ["2"] --> Ok (Int 2, [])
 
     it "Should fail if there's input, but not an int" <| fun () ->
-      parse (TInt m) ["x"] --> Error (TypeError (TInt m, ["x"]))
+      parse (TInt) ["x"] --> Error (TypeError (TInt, ["x"]))
 
     it "Should fail if there's no input to parse" <| fun () -> 
-      parse (TInt m) [] --> Error (NoValues (TInt m, []))
+      parse (TInt) [] --> Error (NoValues (TInt, []))
 
   describe "Parsing TFloat" <| fun () ->
     it "Should succeed if there's float input to parse" <| fun () ->
-      parse (TFloat m) ["2.3"; "2.4"] --> Ok (Float (m, 2.3), ["2.4"])
-      parse (TFloat m) ["2.3"] --> Ok (Float (m, 2.3), [])
-      parse (TFloat m) ["2"] --> Ok (Float (m, 2.0), [])
+      parse (TFloat) ["2.3"; "2.4"] --> Ok (Float 2.3, ["2.4"])
+      parse (TFloat) ["2.3"] --> Ok (Float 2.3, [])
+      parse (TFloat) ["2"] --> Ok (Float 2.0, [])
 
     it "Should fail if there's input, but not a float" <| fun () ->
-      parse (TFloat m) ["x"] --> Error (TypeError (TFloat m, ["x"]))
+      parse (TFloat) ["x"] --> Error (TypeError (TFloat, ["x"]))
 
     it "Should fail if there's no input to parse" <| fun () ->
-      parse (TFloat m) [] --> Error (NoValues (TFloat m, []))
+      parse (TFloat) [] --> Error (NoValues (TFloat, []))
 
   describe "Parsing TString" <| fun () ->
     it "Should succeed if there's input to parse" <| fun () ->
-      parse (TString m) ["hello"; "hi"] --> Ok (String (m, "hello"), ["hi"])
-      parse (TString m) ["hello"] --> Ok (String (m, "hello"), [])
+      parse (TString) ["hello"; "hi"] --> Ok (String "hello", ["hi"])
+      parse (TString) ["hello"] --> Ok (String "hello", [])
 
     it "Should fail if there's no input to parse" <| fun () ->
-      parse (TString m) [] --> Error (NoValues (TString m, []))
+      parse (TString) [] --> Error (NoValues (TString, []))
 
     it "Should fail if there's input, but the input starts a flag" <| fun () ->
-      parse (TString m) ["--flag"] --> Error (UnexpectedFlag (TString m, "--flag", []))
-      parse (TString m) ["-p"; "x"] --> Error (UnexpectedFlag (TString m, "-p", ["x"]))
+      parse (TString) ["--flag"] --> Error (UnexpectedFlag (TString, "--flag", []))
+      parse (TString) ["-p"; "x"] --> Error (UnexpectedFlag (TString, "-p", ["x"]))
 
   describe "Parsing TBoolean" <| fun () ->
     it "Should succeed if there's boolean input to parse" <| fun () ->
-      parse (TBoolean m) ["true"; "true"] --> Ok (Boolean (m, true), ["true"])
-      parse (TBoolean m) ["true"] --> Ok (Boolean (m, true), [])
-      parse (TBoolean m) ["false"] --> Ok (Boolean (m, false), [])
-      parse (TBoolean m) ["yes"] --> Ok (Boolean (m, true), []) 
-      parse (TBoolean m) ["no"] --> Ok (Boolean (m, false), [])
+      parse (TBoolean) ["true"; "true"] --> Ok (Boolean true, ["true"])
+      parse (TBoolean) ["true"] --> Ok (Boolean true, [])
+      parse (TBoolean) ["false"] --> Ok (Boolean false, [])
+      parse (TBoolean) ["yes"] --> Ok (Boolean true, []) 
+      parse (TBoolean) ["no"] --> Ok (Boolean false, [])
 
     it "Should fail if there's input, but not boolean" <| fun () -> 
-      parse (TBoolean m) ["wat"] --> Error (TypeError (TBoolean m, ["wat"]))
+      parse (TBoolean) ["wat"] --> Error (TypeError (TBoolean, ["wat"]))
 
     it "Should fail if there's no input to parse" <| fun () ->
-      parse (TBoolean m) [] --> Error (NoValues (TBoolean m, []))
+      parse (TBoolean) [] --> Error (NoValues (TBoolean, []))
 
   describe "Parsing TOption" <| fun () ->
-    let t = TInt m
+    let t = TInt
     it "Should succeed (as Some) if there's input to parse of type t" <| fun () ->
-      parse (TOption t) ["1"; "2"] --> Ok (Option (t, Some (Int (m, 1))), ["2"])
-      parse (TOption t) ["1"] --> Ok (Option (t, Some (Int (m, 1))), [])
+      parse (TOption t) ["1"; "2"] --> Ok (Option (t, Some (Int 1)), ["2"])
+      parse (TOption t) ["1"] --> Ok (Option (t, Some (Int 1)), [])
 
     it "Should succeed (as None) if there's input to parse not of type t" <| fun () ->
       parse (TOption t) ["x"] --> Ok (Option (t, None), ["x"])
@@ -70,58 +68,58 @@ describe "[Core] parsing specs" <| fun () ->
       parse (TOption t) [] --> Ok (Option (t, None), [])
 
   it "Parsing TList" <| fun () ->
-    let t = TInt m
+    let t = TInt
     parse (TList t) [] --> Ok (List (t, []), [])
-    parse (TList t) ["1"] --> Ok (List (t, [Int (m, 1)]), [])
-    parse (TList t) ["1"; "2"; "3"] --> Ok (List (t, [Int (m, 1); Int (m, 2); Int (m, 3)]), [])
-    parse (TList t) ["1"; "hello"] --> Ok (List (t, [Int (m, 1)]), ["hello"])
+    parse (TList t) ["1"] --> Ok (List (t, [Int 1]), [])
+    parse (TList t) ["1"; "2"; "3"] --> Ok (List (t, [Int 1; Int 2; Int 3]), [])
+    parse (TList t) ["1"; "hello"] --> Ok (List (t, [Int 1]), ["hello"])
     parse (TList t) ["hello"] --> Ok (List (t, []), ["hello"])
 
   describe "Parsing TTuple" <| fun () ->
-    let t1 = TInt m
-    let t2 = TBoolean m
-    let t3 = TString m
+    let t1 = TInt
+    let t2 = TBoolean
+    let t3 = TString
     let ts = [t1; t2; t3]
     let tuple = TTuple ts
 
     it "Should succeed if there're enough arguments for the tuples" <| fun () ->
       parse tuple ["1"; "true"; "hello"; "hi"] 
-      --> Ok (Tuple (ts, [Int (m, 1); Boolean (m, true); String (m, "hello")]), ["hi"])
+      --> Ok (Tuple (ts, [Int 1; Boolean true; String "hello"]), ["hi"])
 
       parse tuple ["1"; "true"; "hello"] 
-      --> Ok (Tuple (ts, [Int (m, 1); Boolean (m, true); String (m, "hello")]), [])
+      --> Ok (Tuple (ts, [Int 1; Boolean true; String "hello"]), [])
 
     it "Should fail if there's a partial parse" <| fun () -> 
       parse tuple ["1"; "true"]
-      --> Error (PartialParse (tuple, [Int (m, 1); Boolean (m, true)], t3, [], ["1"; "true"]))
+      --> Error (PartialParse (tuple, [Int 1; Boolean true], t3, [], ["1"; "true"]))
 
   describe "Parsing TRecord" <| fun () ->
     let t = typeof<unit>  // we don't use this here, but we need a value to fill Type
     let fverbose = {
       flag = "--verbose"
       aliases = []
-      flagType = TBoolean m
+      flagType = TBoolean
       defaultValue = None
       shortDescription = None
     }
     let fconfig = {
       flag = "--config"
       aliases = []
-      flagType = TString m
-      defaultValue = Some (String (m, "config.json"))
+      flagType = TString
+      defaultValue = Some (String "config.json")
       shortDescription = None
     }
     let ftrace = {
       flag = "--trace"
       aliases = []
-      flagType = TOption (TString m)
+      flagType = TOption TString
       defaultValue = None
       shortDescription = None
     }
     let ffile = {
       flag = "--file"
       aliases = []
-      flagType = TString m
+      flagType = TString
       defaultValue = None
       shortDescription = None
     }
@@ -131,23 +129,23 @@ describe "[Core] parsing specs" <| fun () ->
 
       parse tr ["--file"; "a"]
       --> Ok (Record(tr, [
-            "verbose", Boolean(m, false)
-            "file", String(m, "a")
-            "config", String(m, "config.json")
+            "verbose", Boolean false
+            "file", String "a"
+            "config", String "config.json"
           ]), [])
 
       parse tr ["--verbose"; "--file"; "a"]
       --> Ok (Record(tr, [
-            "verbose", Boolean(m, true)
-            "file", String(m, "a")
-            "config", String(m, "config.json")
+            "verbose", Boolean true
+            "file", String "a"
+            "config", String "config.json"
           ]), [])
 
       parse tr ["--verbose"; "--config"; "x"; "--file"; "a"]
       --> Ok (Record(tr, [
-            "verbose", Boolean(m, true)
-            "file", String(m, "a")
-            "config", String(m, "x")
+            "verbose", Boolean true
+            "file", String "a"
+            "config", String "x"
           ]), [])
 
     it "Should leave positional arguments alone" <| fun () ->
@@ -155,8 +153,8 @@ describe "[Core] parsing specs" <| fun () ->
 
       parse tr ["--config"; "hi"; "hello"]
       --> Ok (Record(tr, [
-            "verbose", Boolean(m, false)
-            "config", String(m, "hi")
+            "verbose", Boolean false
+            "config", String "hi"
           ]), ["hello"])
 
     it "Should fail on unrecognised flags if it hasn't finished parsing" <| fun () ->
@@ -164,15 +162,15 @@ describe "[Core] parsing specs" <| fun () ->
 
       parse tr ["--file"; "hi"; "--other"; "hello"]
       --> Ok (Record(tr, [
-            "verbose", Boolean(m, false)
-            "file", String(m, "hi")
+            "verbose", Boolean false
+            "file", String "hi"
           ]), ["--other"; "hello"])
 
       parse tr ["--verbose"; "--other"; "hello"]
       --> Error (UnrecognisedFlag (
                   tr,
                   "--other",
-                  ["verbose", fverbose, Boolean(m, true)],
+                  ["verbose", fverbose, Boolean true],
                   ["--other"; "hello"],
                   ["--verbose"; "--other"; "hello"]
                 ))
@@ -182,21 +180,21 @@ describe "[Core] parsing specs" <| fun () ->
     let fverbose = {
       flag = "--verbose"
       aliases = []
-      flagType = TBoolean m
+      flagType = TBoolean
       defaultValue = None
       shortDescription = None
     }
     let fconfig = {
       flag = "--config"
       aliases = []
-      flagType = TString m
-      defaultValue = Some (String (m, "config.json"))
+      flagType = TString
+      defaultValue = Some (String "config.json")
       shortDescription = None
     }
     let tr = TRecord(t, ["verbose", fverbose; "config", fconfig])
-    let t1 = [TInt m; tr]
+    let t1 = [TInt; tr]
     let t2 = []
-    let t3 = [TOption (TString m)]
+    let t3 = [TOption TString]
     let c0 = 0, None, { shortDescription = None; parameters = t1 }
     let c1 = 1, (Some "version"), { shortDescription = None; parameters = t2 }
     let c2 = 2, (Some "help"), { shortDescription = None; parameters = t3 }
@@ -207,24 +205,24 @@ describe "[Core] parsing specs" <| fun () ->
     it "Should parse the command if all types parse" <| fun () ->
       parse ct ["1"; "--verbose"]
       --> Ok (Case (ct, 0, [
-            Int(m, 1)
-            Record(tr, ["verbose", Boolean(m, true); "config", String(m, "config.json")])
+            Int 1
+            Record(tr, ["verbose", Boolean true; "config", String "config.json"])
           ]), [])
 
       parse ct ["version"]
       --> Ok (Case (ct, 1, []), [])
 
       parse ct ["help"]
-      --> Ok (Case (ct, 2, [Option(TString(m), None)]), [])
+      --> Ok (Case (ct, 2, [Option(TString, None)]), [])
 
       parse ct ["help"; "version"]
-      --> Ok (Case (ct, 2, [Option(TString(m), Some (String(m, "version")))]), [])
+      --> Ok (Case (ct, 2, [Option(TString, Some (String "version"))]), [])
 
     it "Should fail if the command fails to parse" <| fun () ->
       parse ct ["x"]
       --> Error (CommandFailed(
                   c0, 
-                  PartialParse(TTuple (p c0), [], TInt m, ["x"], ["x"]),
+                  PartialParse(TTuple (p c0), [], TInt, ["x"], ["x"]),
                   ["x"]
                 ))
 

@@ -56,35 +56,33 @@ describe "[Reflection]" <| fun () ->
     #endif
   
   describe "To Mei type" <| fun () ->
-    let m = emptyMeta
-
     it "int" <| fun () ->
       Auto.toMeiType<int>()
-      --> TInt m
+      --> TInt
     
     it "bool" <| fun () ->
       Auto.toMeiType<bool>()
-      --> TBoolean m
+      --> TBoolean
 
     it "string" <| fun () ->
       Auto.toMeiType<string>()
-      --> TString m
+      --> TString
 
     it "double" <| fun () ->
       Auto.toMeiType<double>()
-      --> TFloat m
+      --> TFloat
 
     it "base option" <| fun () ->
       Auto.toMeiType<int option>()
-      --> TOption (TInt m)
+      --> TOption TInt
      
     it "base list" <| fun () ->
       Auto.toMeiType<int list>()
-      --> TList (TInt m)
+      --> TList TInt
 
     it "generic list" <| fun () ->
       Auto.toMeiType<int option list>()
-      --> TList (TOption (TInt m))
+      --> TList (TOption TInt)
 
     it "record type" <| fun () ->
       let t = typeof<SimpleOptions>
@@ -92,14 +90,14 @@ describe "[Reflection]" <| fun () ->
       --> TRecord(t, [
             "verbose", { 
               flag = "--verbose"
-              flagType = TBoolean m
+              flagType = TBoolean
               aliases = []
               shortDescription = None
               defaultValue = None
             }
             "config", {
               flag = "--config"
-              flagType = TOption (TString m)
+              flagType = TOption TString
               aliases = []
               shortDescription = None
               defaultValue = None
@@ -115,23 +113,23 @@ describe "[Reflection]" <| fun () ->
               TRecord(recType mt 0 0, [
                 "verbose", { 
                   flag = "--verbose"
-                  flagType = TBoolean m
+                  flagType = TBoolean
                   aliases = []
                   shortDescription = None
                   defaultValue = None
                 }
                 "config", {
                   flag = "--config"
-                  flagType = TOption (TString m)
+                  flagType = TOption TString
                   aliases = []
                   shortDescription = None
                   defaultValue = None
                 }
               ])
-              TString m
+              TString
             ]}
             1, Some "version", { shortDescription = None; parameters = [] }
-            2, Some "help", { shortDescription = None; parameters = [TOption (TString m)] }
+            2, Some "help", { shortDescription = None; parameters = [TOption TString] }
           ])
   
     

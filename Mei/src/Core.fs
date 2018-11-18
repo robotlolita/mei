@@ -14,19 +14,9 @@ module TypeSystem =
 
   open System
 
-  /// Meta-data may be attached to a type to describe what we expect
-  /// to be provided to it. This is only used for error reporting and
-  /// help screens.
-  type Metadata = {
-    /// The name to show when describing this type
-    name: string option;
-
-    /// A short description of what value this type expects
-    shortDescription: string option;
-  }
 
   /// A specification for how to parse a particular command-line flag.
-  and MeiFlag = {
+  type MeiFlag = {
     /// The flag (in "--flag" format) this specification describes. This
     /// is what we call its "canonical" form--the name we use througout
     /// parsing to identify the flag and its values.
@@ -64,10 +54,10 @@ module TypeSystem =
   /// usefull when using the reflection API.
   and MeiType =
     | TUnit
-    | TInt of Metadata
-    | TFloat of Metadata
-    | TString of Metadata
-    | TBoolean of Metadata
+    | TInt
+    | TFloat
+    | TString
+    | TBoolean
     | TOption of MeiType
     | TList of MeiType
     | TTuple of MeiType list
@@ -80,10 +70,10 @@ module TypeSystem =
   /// original types. Doing so allows us to recover all type information
   /// for the value (and so convert between F#<->Mei)
   and MeiValue =
-    | Int of Metadata * int
-    | Float of Metadata * double
-    | String of Metadata * string
-    | Boolean of Metadata * bool
+    | Int of int
+    | Float of double
+    | String of string
+    | Boolean of bool
     | Option of MeiType * MeiValue option
     | List of MeiType * MeiValue list
     | Tuple of MeiType list * MeiValue list
@@ -170,13 +160,6 @@ module TypeSystem =
     | FUnexpectedPositional of positional: string * rest: string list
 
 
-  /// Constructs an empty meta-data for some type.
-  let emptyMeta = {
-    name = None;
-    shortDescription = None;
-  }
-
-
   /// A textual representation of a particular type
   let rec typeName (t:MeiType) =
     let presentTuple ts = sprintf "(%s)" (ts |> List.map typeName |> String.concat ", ")
@@ -204,10 +187,10 @@ module TypeSystem =
   /// Reconstructs the Mei type of some Mei value.
   let typeOf (v:MeiValue) =
     match v with
-    | Int (m, _) -> TInt m
-    | Float (m, _) -> TFloat m
-    | String (m, _) -> TString m
-    | Boolean (m, _) -> TBoolean m
+    | Int _ -> TInt
+    | Float _ -> TFloat
+    | String _ -> TString
+    | Boolean _ -> TBoolean
     | Option (t, _) -> TOption t
     | List (t, _) -> TList t
     | Tuple (t, _) -> TTuple t
@@ -222,7 +205,7 @@ module TypeSystem =
     | TInt _ -> None
     | TFloat _ -> None
     | TString _ -> None
-    | TBoolean _ -> Some (Boolean (emptyMeta, false))
+    | TBoolean _ -> Some (Boolean false)
     | TOption t -> Some (Option (t, None))
     | TList t -> Some (List (t, []))
     | TTuple _ -> None
@@ -456,8 +439,8 @@ module CliParsing =
           Error (FUnrecognisedFlag (name, argv))
       | Some (_, flag) ->
           match flag.flagType with
-          | TBoolean(m) -> 
-              Ok (canonicalName, (Boolean (m, true)), argv)
+          | TBoolean -> 
+              Ok (canonicalName, Boolean true, argv)
           | t ->
               match parse t argv with
               | Error e -> Error (FParseError (flag, name, e, argv))
@@ -539,25 +522,25 @@ module CliParsing =
   /// Parses command line arguments from a type specification.
   and parse (spec:MeiType) (argv:string list) =
     match spec, argv with
-    | (TInt meta), (x :: rest) -> 
+    | TInt, (x :: rest) -> 
         match tryInt x with
-        | Some x -> Ok <| (Int (meta, x), rest)
+        | Some x -> Ok <| (Int x, rest)
         | None -> Error <| TypeError (spec, argv)
     
-    | (TFloat meta), (x :: rest) ->
+    | TFloat, (x :: rest) ->
         match tryDouble x with
-        | Some x -> Ok <| (Float (meta, x), rest)
+        | Some x -> Ok <| (Float x, rest)
         | None -> Error <| TypeError (spec, argv)
 
-    | (TString meta), (x :: rest) ->
+    | TString, (x :: rest) ->
         if isFlag x then
           Error <| UnexpectedFlag (spec, x, rest)
         else
-          Ok <| (String (meta, x), rest)
+          Ok <| (String x, rest)
 
-    | (TBoolean meta), (x :: rest) ->
+    | TBoolean, (x :: rest) ->
         match tryBoolean x with
-        | Some x -> Ok <| (Boolean (meta, x), rest)
+        | Some x -> Ok <| (Boolean x, rest)
         | None -> Error <| TypeError (spec, argv)
 
     | (TOption t), argv ->

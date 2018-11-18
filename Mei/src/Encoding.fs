@@ -19,10 +19,10 @@ type IToMeiValue =
 /// coerce it to the right type.
 let rec fromMei value =
   match value with
-  | Int(_, v) -> box v
-  | Float(_, v) -> box v
-  | String(_, v) -> box v
-  | Boolean(_, v) -> box v
+  | Int v -> box v
+  | Float v -> box v
+  | String v -> box v
+  | Boolean v -> box v
   
   | Option(t, Some v) -> fromMei (assertType t v) |> Some |> box
   | Option(_, None) -> box None
@@ -71,10 +71,10 @@ let rec toMei (x:obj) =
   | :? (obj * obj * obj * obj * obj * obj) as t6 ->
       let (a, b, c, d, e, f) = t6 in tuple [a; b; c; d; e; f]
 
-  | :? int as i -> Int (emptyMeta, i)
-  | :? float as f -> Float (emptyMeta, f)
-  | :? string as s -> String (emptyMeta, s)
-  | :? bool as b -> Boolean (emptyMeta, b)
+  | :? int as i -> Int i
+  | :? float as f -> Float f
+  | :? string as s -> String s
+  | :? bool as b -> Boolean b
 
   | :? (obj option) as o -> 
         match o with
@@ -158,10 +158,10 @@ module Reflection =
           failwithf "Unsupported type %s" x
     else
       match t.FullName with
-      | "System.Boolean" -> TBoolean emptyMeta
-      | "System.Int32" -> TInt emptyMeta
-      | "System.Double" -> TFloat emptyMeta
-      | "System.String" -> TString emptyMeta
+      | "System.Boolean" -> TBoolean
+      | "System.Int32" -> TInt
+      | "System.Double" -> TFloat
+      | "System.String" -> TString
       | x -> failwithf "Unsupported type %s" x  
 
   and private unionToMeiType t =
