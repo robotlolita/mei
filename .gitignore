@@ -1,1 +1,6 @@
-.fake
+build/
+.fable
+.fable-*
+node_modules/
+bin/
+obj/

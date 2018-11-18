@@ -22,19 +22,19 @@ help:
 
 .PHONY: build
 build: package-lock.json
-	cd src && dotnet fable npm-build
+	cd Mei/src && dotnet fable fable-splitter -- --config Mei/src/splitter.config.js
 
 .PHONY: build-tests
 build-tests: package-lock.json
-	cd test && dotnet fable npm-build-test
+	cd Mei/test && dotnet fable fable-splitter -- --config Mei/test/splitter.config.js
 
 .PHONY: test
 test: build-tests
-	npm test
+	./node_modules/.bin/jest
 
 .PHONY: test-watch-build
 test-watch-build: package-lock.json
-	cd test && dotnet fable npm-watch-test
+	cd Mei/test && dotnet fable fable-splitter -- --config Mei/test/splitter.config.js --watch
 
 .PHONY: test-watch-run
 test-watch-run: package-lock.json

@@ -1,18 +1,15 @@
 module Mei.Tests.Reflection
 
-open Fable.Core
-open Fable.Core.JsInterop
 open Fable.Import.Jest
 open Mei.Tests.Matchers
 open OrigamiTower.Mei.Core.TypeSystem
-open OrigamiTower.Mei.Encoding
 open OrigamiTower.Mei.Encoding.Reflection
 
 open FSharp.Reflection
 
 type Commands =
-  | [<MainCommand>] Main
-  | [<Prefix("--")>] Happy
+  | Main
+  | Happy
   | Happy_World
 
 type SimpleOptions = {
