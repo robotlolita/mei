@@ -47,3 +47,12 @@ distclean:
 # -- BUILD RULES ------------------------------------------------------
 package-lock.json: package.json
 	npm install
+
+
+# -- EXAMPLES ---------------------------------------------------------
+ALL_EXAMPLES := examples/greeting/build/hello.js
+
+examples: $(ALL_EXAMPLES)
+
+examples/greeting/build/hello.js: examples/greeting/hello.fsproj examples/greeting/hello.fs
+	cd examples/greeting && dotnet fable fable-splitter -- --config examples/greeting/splitter.config.js
