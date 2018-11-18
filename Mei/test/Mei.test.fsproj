@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Mei.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Matchers.fs" />
+    <Compile Include="Core.test.fs" />
+    <Compile Include="Encoding.test.fs" />
+    <Compile Include="Reflection.test.fs" />
+    <Compile Include="FullParser.test.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="dotnet-fable" Version="2.0.10" />
+    <PackageReference Include="Fable.Core" Version="2.0.1" />
+    <PackageReference Include="Fable.Import.Jest" Version="1.9.0" />
+    <DotNetCliToolReference Include="dotnet-fable" Version="2.0.10" />
+  </ItemGroup>
+</Project>

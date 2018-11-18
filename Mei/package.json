@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "fable-splitter --config src/splitter.config.js",
+    "build-test": "fable-splitter --config test/splitter.config.js",
+    "watch-test": "fable-splitter --config test/splitter.config.js --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.6",
+    "fable-splitter": "^2.0.2"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}
