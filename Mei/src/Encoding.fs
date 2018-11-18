@@ -92,37 +92,12 @@ let rec toMei (x:obj) =
   | _ -> failwithf "%s does not implement IToMei" (x.ToString())
 #endif
 
-[<AutoOpen>]
-module Attributes =
-  [<AttributeUsage(AttributeTargets.Property, AllowMultiple = true)>]
-  type Alias(alias:string) = 
-    inherit Attribute()
-    member __.Alias = alias
-
-  [<AttributeUsage(AttributeTargets.Property, AllowMultiple = false)>]
-  type ShortDescription(desc:string) = 
-    inherit Attribute()
-    member __.Description = desc
-
-  [<AttributeUsage(AttributeTargets.Property, AllowMultiple = false)>]
-  type DefaultValue(value: MeiValue) =
-    inherit Attribute()
-    member __.DefaultValue = value
-
-  [<AttributeUsage(AttributeTargets.Property, AllowMultiple = false)>]
-  type MainCommand() = inherit Attribute()
-  
-  [<AttributeUsage(AttributeTargets.Property, AllowMultiple = false)>]
-  type Prefix(prefix: string) =
-    inherit Attribute()
-    member __.Prefix = prefix
-
 
 module Reflection =
   open Fable.Core
   open FSharp.Reflection
   open System.Reflection
-  open Attributes
+  open OrigamiTower.Mei.Attributes
 
 
   let inline customAttributes<'T when 'T :> Attribute> (t:Type) : seq<'T> = 

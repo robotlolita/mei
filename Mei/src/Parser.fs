@@ -1,3 +1,4 @@
+[<AutoOpen>]
 module OrigamiTower.Mei.Parser
 
 open Fable.Core

@@ -2,7 +2,7 @@ module Mei.Tests.FullParser
 
 open Fable.Import.Jest
 open Mei.Tests.Matchers
-open OrigamiTower.Mei.Parser
+open OrigamiTower.Mei
 
 type SimpleOptions = {
   verbose: bool;

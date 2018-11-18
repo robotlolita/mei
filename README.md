@@ -38,8 +38,8 @@ type Commands =
 Generate a parser from the types, and use it to parse the command line arguments:
 
 ```fsharp
-let parser = CliParser.Create<Commands>(programName="hello")
-match parser.parse ["--greeting"; "Hi"; "Alice"] with
+let parser = cliParser<Commands>(programName="hello")
+match parser.Parse ["--greeting"; "Hi"; "Alice"] with
 | Main(opts, name) -> printfn "%s, %s" opts.greeting name
 | Version -> printfn "hello version 1.0.0"
 | Help -> printfn "%s" (parser.help())
