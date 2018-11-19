@@ -100,3 +100,4 @@ As a mnemonic, you can also read it as the backronym "\[Mei\]stake-free (command
 Copyright (c) Quil, 2018. Licensed under the MIT licence.
 
 [argu]: https://github.com/fsprojects/Argu
+[nuget package]: https://www.nuget.org/packages/OrigamiTower.Mei/
