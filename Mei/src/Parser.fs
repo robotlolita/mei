@@ -43,11 +43,9 @@ module Describe =
     | TOption(t), f -> sprintf "%s (optionally)" (describeType f t)
     | TList(t), Singular -> sprintf "a list of %s" (describeType Plural t)
     | TList(t), Plural -> sprintf "lists of %s" (describeType Plural t)
-    | TTuple(ts), f -> 
+    | TTuple(ts), _ -> 
         let desc = ts |> List.map (describeType Singular) |> joinSequence "and"
-        match f with
-        | Singular -> sprintf "a sequence of %s" desc
-        | Plural -> sprintf "sequences of %s" desc
+        sprintf "the sequence: %s" desc
     | TRecord(t, _), _ -> sprintf "[%s]" t.Name
     | TUnion(_, cs), _ -> describeCommands cs
           
@@ -77,20 +75,43 @@ module Describe =
     | NoCommandsMatched(commands, _) ->
         sprintf "Expected either %s" (describeCommands commands)
     | CommandFailed((_, name, _), error, _) ->
-        let name = Option.defaultValue "the main command" name
-        in sprintf "Didn't find a valid %s. %s"
+        let name = Option.defaultValue "main" name
+        in sprintf "Didn't find a valid %s command.\n\n%s"
                    name (describeParsingError error)
 
 
+/// A type that decides how we exit the program with a custom exit code
+type IExiter =
+  abstract member Exit : int -> unit
+
+
+#if FABLE_COMPILER
+open Fable.Import.Node.Globals
+#endif
+
+/// An exiter type for Node.js
+type DefaultExiter() =
+  interface IExiter with
+    member self.Exit(status: int) : unit =
+      #if FABLE_COMPILER
+      ``process``.exit(status)
+      #endif
+      ()
 
 /// A parser for CLI arguments, constructed from a typed specification
-type CliParser<'T>(spec: MeiType) =
+type CliParser<'T>(spec: MeiType, ?programName: string, ?exiter: IExiter) =
+  let exiter = exiter |> Option.defaultWith (fun() -> upcast DefaultExiter())
+
   /// Parses the given argument list with this specification.
   /// Throws a more-or-less descriptive error if it fails.
   member self.Parse(args: string list) : 'T =
     match self.TryParse args with
     | Ok v -> v
-    | Error e -> failwithf "Failed to parse arguments: %s" (Describe.describeParsingError e)
+    | Error e -> 
+        printf "Failed to parse arguments: %s" (Describe.describeParsingError e)
+        (exiter.Exit 1)
+        failwith ""
+        
 
 
   /// Tries to parse the given argument list, returns the error if

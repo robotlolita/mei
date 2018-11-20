@@ -21,6 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Fable.Core" Version="2.0.1" />
     <DotNetCliToolReference Include="dotnet-fable" Version="2.0.10" />
+    <PackageReference Include="Fable.Import.Node" Version="0.4.3" />
   </ItemGroup>
   <!-- Add source files to "fable" folder in Nuget package -->
   <ItemGroup>

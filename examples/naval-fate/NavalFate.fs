@@ -7,8 +7,8 @@ open OrigamiTower.Mei
 type Commands =
   | Ship of ShipCommands
   | Mine of MineCommands
-  | Help
-  | Version
+  | Help_
+  | Version_
 
 and ShipCommands =
   | New of names: string list
@@ -57,10 +57,10 @@ match parser.Parse args with
 | Mine (Remove (x, y, opts)) ->
     printf "Removing mine from %i, %i %s" x y (describeMine opts)
 
-| Version ->
+| Version_ ->
     printfn "Naval Fate version 1.0.0"
 
-| Help ->
+| Help_ ->
     printfn 
       """
       Naval Fate.
