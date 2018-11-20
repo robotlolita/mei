@@ -5,12 +5,6 @@ open System
 open System.Reflection
 open FSharp.Reflection
 open OrigamiTower.Mei.Core.TypeSystem
-open OrigamiTower.Mei.Utils.Operators
-
-
-/// A value that can be converted to a Mei value
-type IToMeiValue =
-  abstract member ToMeiValue : unit -> MeiValue
 
 
 /// Converts a Mei type to an F# type.
@@ -47,50 +41,6 @@ let rec fromMei value =
       let c = cases |> Array.find (fun x -> x.Tag = tag)
       FSharpValue.MakeUnion(c, vs |> List.map fromMei |> Array.ofList)
         |> box
-           
-#if FABLE_COMPILER
-#else
-/// Converts an F# type to a Mei type
-let rec toMei (x:obj) =
-  let inline tuple xs = let vs = List.map toMei xs 
-                        in Tuple (List.map typeOf vs, vs)
-
-  match x with
-  | :? (obj * obj) as t2 -> 
-      let (a, b) = t2 in tuple [a; b]
-
-  | :? (obj * obj * obj) as t3 ->
-      let (a, b, c) = t3 in tuple [a; b; c]
-
-  | :? (obj * obj * obj * obj) as t4 ->
-      let (a, b, c, d) = t4 in tuple [a; b; c; d]
-
-  | :? (obj * obj * obj * obj * obj) as t5 ->
-      let (a, b, c, d, e) = t5 in tuple [a; b; c; d; e]
-
-  | :? (obj * obj * obj * obj * obj * obj) as t6 ->
-      let (a, b, c, d, e, f) = t6 in tuple [a; b; c; d; e; f]
-
-  | :? int as i -> Int i
-  | :? float as f -> Float f
-  | :? string as s -> String s
-  | :? bool as b -> Boolean b
-
-  | :? (obj option) as o -> 
-        match o with
-        | Some v -> let v = toMei v
-                    in Option ((typeOf v), Some v)
-        | None -> Option (TUnit, None)
-
-  | :? (obj list) as l -> 
-        match l with
-        | h :: rest -> let v = toMei h
-                       in List ((typeOf v), v :: (List.map toMei rest))
-        | [] -> List (TUnit, [])
-
-  | :? IToMeiValue as t -> t.ToMeiValue()
-  | _ -> failwithf "%s does not implement IToMei" (x.ToString())
-#endif
 
 
 module Reflection =
