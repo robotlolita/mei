@@ -13,6 +13,6 @@
     <PackageReference Include="Fable.Import.Node" Version="0.4.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Mei\src\Mei.fsproj" />
+    <ProjectReference Include="..\..\Mei\src\OrigamiTower.Mei.fsproj" />
   </ItemGroup>
 </Project>
