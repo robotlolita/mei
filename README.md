@@ -61,6 +61,11 @@ If you change it to the empty list, it should display a detailed error to the us
 
 You can look at the `examples` folder for more detailed and complete command line applications.
 
+## Building examples
+
+Run `npm install` at the root, then `make examples` to build the examples.
+
+
 ## Design overview
 
 The design is highly influenced by [Argu][], using reflection on F# types to provide a specification for the arguments parsing. However, Argu uses tagged unions for describing flags, positional arguments, and commands. This feels slightly awkward to me, and the resulting interface isn't as practical as I think it could be--even though the idea is really good!

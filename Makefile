@@ -1,4 +1,7 @@
+BIN := ./node_modules/.bin
 SOURCES := $(wildcard src/*.fs) $(wildcard src/*/*.fs)
+FABLE_SPLITTER := $(BIN)/fable-splitter
+JEST := $(BIN)/jest
 
 # -- TASKS ------------------------------------------------------------
 .PHONY: help
@@ -21,32 +24,28 @@ help:
 
 
 .PHONY: build
-build: package-lock.json
-	cd Mei/src && dotnet fable fable-splitter -- --config Mei/src/splitter.config.js
+build:
+	$(FABLE_SPLITTER) --config Mei/src/splitter.config.js
 
 .PHONY: build-tests
-build-tests: package-lock.json
-	cd Mei/test && dotnet fable fable-splitter -- --config Mei/test/splitter.config.js
+build-tests:
+	$(FABLE_SPLITTER) --config Mei/test/splitter.config.js
 
 .PHONY: test
 test: build-tests
-	./node_modules/.bin/jest
+	$(JEST)
 
 .PHONY: test-watch-build
-test-watch-build: package-lock.json
-	cd Mei/test && dotnet fable fable-splitter -- --config Mei/test/splitter.config.js --watch
+test-watch-build:
+	$(FABLE_SPLITTER) --config Mei/test/splitter.config.js --watch
 
 .PHONY: test-watch-run
-test-watch-run: package-lock.json
-	./node_modules/.bin/jest --watch
+test-watch-run:
+	$(JEST) --watch
 
 .PHONY: distclean
 distclean:
 	rm -rf build
-
-# -- BUILD RULES ------------------------------------------------------
-package-lock.json: package.json
-	npm install
 
 
 # -- EXAMPLES ---------------------------------------------------------
@@ -55,7 +54,7 @@ ALL_EXAMPLES := examples/greeting/build/hello.js examples/naval-fate/build/Naval
 examples: $(ALL_EXAMPLES)
 
 examples/greeting/build/hello.js: examples/greeting/hello.fsproj examples/greeting/hello.fs
-	cd examples/greeting && dotnet fable fable-splitter -- --config examples/greeting/splitter.config.js
+	$(FABLE_SPLITTER) --config examples/greeting/splitter.config.js
 
 examples/naval-fate/build/NavalFate.js: examples/naval-fate/NavalFate.fsproj examples/naval-fate/NavalFate.fs
-	cd examples/naval-fate && dotnet fable fable-splitter -- --config examples/naval-fate/splitter.config.js
+	$(FABLE_SPLITTER) --config examples/naval-fate/splitter.config.js

@@ -1,11 +1,10 @@
 {
   "private": true,
-  "dependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.6",
-    "fable-splitter": "^2.0.2"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@babel/preset-env": "^7.2.0",
+    "fable-compiler": "^2.1.8",
+    "fable-splitter": "^2.1.0",
     "jest": "^23.6.0"
   }
 }
